@@ -1,0 +1,30 @@
+services:
+
+    _defaults:
+        autoconfigure: true
+        autowire:      true
+
+    cache.jmf_route_access:
+        parent: cache.adapter.filesystem
+        tags: [{name: cache.pool}]
+
+    Jmf\RouteAccess\:
+        resource: '../src/'
+
+    Jmf\RouteAccess\Policy\RouteAccessPolicyFactory:
+        arguments:
+            $cache: '@cache.jmf_route_access'
+
+    Jmf\RouteAccess\Policy\RouteAccessPolicy:
+        factory: ['@Jmf\RouteAccess\Policy\RouteAccessPolicyFactory', 'create']
+        arguments:
+            - '%jmf_route_access.policy_config%'
+
+    Jmf\RouteAccess\Guard\RouteAccessGuardInterface:
+        alias: Jmf\RouteAccess\Guard\RouteAccessGuard
+
+    Jmf\RouteAccess\Twig\RouteAccessExtension:
+        arguments:
+            $prefix: '%jmf_route_access.twig_functions_prefix%'
+        tags:
+            - 'twig.extension'

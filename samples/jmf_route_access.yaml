@@ -1,0 +1,40 @@
+jmf_route_access:
+
+    policy:
+
+        # Routes that are always accessible, regardless of authentication or roles.
+        # Supports wildcard patterns: "*" matches any sequence of characters.
+        # Default: ["*"] (all routes are public). Override to restrict access.
+        public_routes:
+            - 'app_login'
+            - 'app_logout'
+            - '_preview_error'  # Error preview
+            - '_profiler*'      # Symfony profiler
+            - '_wdt*'           # Web Debug Toolbar
+
+        # Map each Symfony role to the list of route names (or patterns) it may access.
+        # Role hierarchy is respected: a role inherits the routes of all roles below it.
+        # Use "*" as the sole entry to grant access to all routes.
+        roles:
+
+            ROLE_USER:
+                - 'app_home'
+                - 'app_profile'
+                - 'app_profile_edit'
+                - 'post.index'
+                - 'post.read'
+                - 'comment.create'
+
+            ROLE_EDITOR:
+                - 'post.create'
+                - 'post.update'
+                - 'post.delete'
+                - 'comment.delete'
+                - 'media.*'         # Grants access to all routes matching "media.*"
+
+            ROLE_ADMIN:
+                - '*'               # Grants access to all routes
+
+    # Optional prefix for Twig functions registered by this bundle.
+    # Default: '' (no prefix). Example: 'jmf_' registers 'jmf_can_access_route'.
+    twig_functions_prefix: ''
